@@ -1,9 +1,32 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import styles from '../styles/Home.module.css';
+import Movie from './components/Movie';
 
 const Home: NextPage = () => {
+  const [popular, setPopular] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [activeGenera, setActiveGenera] = useState(0);
+
+  useEffect(() => {
+    fetchPopular();
+    history.scrollRestoration = 'auto';
+  }, []);
+
+  const fetchPopular = async () => {
+    //! 기본 fetch로 데이터 가져올 경우 되돌아 왔을 때는 무조건 스크롤이 최상단으로 고정됨
+    const data = await fetch(
+      'https://api.themoviedb.org/3/movie/popular?api_key=d1eb186c558e65b045af69086018917f&language=en-US&page=1'
+    );
+    const movies = await data.json();
+
+    setPopular(movies.results);
+    setFiltered(movies.results);
+  };
+
   return (
     <div className={styles.container}>
       <Head>
@@ -13,44 +36,15 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+        <h1 className={styles.title}>Next Scroll 뒤로가기 유지를 위한 학습중</h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
+        {filtered.map((movie: any) => {
+          return <Movie key={movie.id} movie={movie} />;
+        })}
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className={styles.card}
-          >
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
-        </div>
+        <Link href="/detail">
+          <a>go Detail</a>
+        </Link>
       </main>
 
       <footer className={styles.footer}>
@@ -66,7 +60,7 @@ const Home: NextPage = () => {
         </a>
       </footer>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
