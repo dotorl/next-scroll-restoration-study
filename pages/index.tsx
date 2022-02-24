@@ -1,30 +1,56 @@
+import axios from 'axios';
+import { cacheAdapterEnhancer } from 'axios-extensions';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
+import { axiosGetCache } from '../util/axiosCache';
 import Movie from './components/Movie';
 
 const Home: NextPage = () => {
+  const [sampleData, setSampleData] = useState([]);
   const [popular, setPopular] = useState([]);
   const [filtered, setFiltered] = useState([]);
   const [activeGenera, setActiveGenera] = useState(0);
 
+  const default_API_URL =
+    'https://api.themoviedb.org/3/movie/popular?api_key=d1eb186c558e65b045af69086018917f&language=en-US&page=1';
+  const default_API_URL2 = 'https://base.uplus.co.kr:9001/ubaseweb/mobile/homepanel?panelId=P2773';
+
   useEffect(() => {
-    fetchPopular();
-    history.scrollRestoration = 'auto';
+    // fetchPopular();
+    defaultAxios();
+    // history.scrollRestoration = 'auto';
   }, []);
 
+  // CASE1. 기본 Fetch 사용할 경우
   const fetchPopular = async () => {
-    //! 기본 fetch로 데이터 가져올 경우 되돌아 왔을 때는 무조건 스크롤이 최상단으로 고정됨
-    const data = await fetch(
-      'https://api.themoviedb.org/3/movie/popular?api_key=d1eb186c558e65b045af69086018917f&language=en-US&page=1'
-    );
+    const data = await fetch(default_API_URL);
     const movies = await data.json();
-
     setPopular(movies.results);
     setFiltered(movies.results);
+  };
+
+  // CASE2. Axios 사용할 경우
+  const defaultAxios = async () => {
+    // ! 단순 cache 없이 axios
+    // const movies = await axios.get(default_API_URL);
+    // setPopular(movies.data.results);
+    // setFiltered(movies.data.results);
+    // ! Cache 사용하여 axios
+    const movis = await axiosGetCache(default_API_URL, {}, { forceUpdate: false, cache: true }).then((res) => {
+      console.log('###########');
+      setPopular(res.data.results);
+      setFiltered(res.data.results);
+    });
+
+    // panel TEST
+    // const response = await axios.get('');
+    // const response = await axiosGetCache(default_API_URL2).then((res) => {
+    //   setSampleData(res.data.result.list);
+    // });
   };
 
   return (
@@ -41,6 +67,15 @@ const Home: NextPage = () => {
         {filtered.map((movie: any) => {
           return <Movie key={movie.id} movie={movie} />;
         })}
+
+        {/* {sampleData.map((data: any) => {
+          return (
+            <div key={data.data_val}>
+              <h1>{data.paper_title}</h1>
+              <img src={data.still_url + data.still_file_name} width={200} height={300} />
+            </div>
+          );
+        })} */}
 
         <Link href="/detail">
           <a>go Detail</a>
