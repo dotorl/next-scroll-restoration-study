@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { cacheAdapterEnhancer } from 'axios-extensions';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -8,6 +7,7 @@ import { useEffect, useState } from 'react';
 import styles from '../styles/Home.module.css';
 import { axiosGetCache } from '../util/axiosCache';
 import Movie from './components/Movie';
+import useScrollMove from './hooks/useScrollMove';
 
 const Home: NextPage = () => {
   const [sampleData, setSampleData] = useState([]);
@@ -18,6 +18,31 @@ const Home: NextPage = () => {
   const default_API_URL =
     'https://api.themoviedb.org/3/movie/popular?api_key=d1eb186c558e65b045af69086018917f&language=en-US&page=1';
   const default_API_URL2 = 'https://base.uplus.co.kr:9001/ubaseweb/mobile/homepanel?panelId=P2773';
+
+  const { scrollInfos, scrollRemove } = useScrollMove({
+    page: `home`,
+    path: `/`,
+    dom: '',
+  });
+
+  useEffect(() => {
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@ HERE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+    // console.log(scrollInfos);
+    if (scrollInfos) {
+      console.log('scrollInfos : ', scrollInfos);
+      setTimeout(() => {
+        const transScrollInfos = Number(scrollInfos);
+        window.scrollTo(0, transScrollInfos);
+        const scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop);
+        console.log('scrollTop : ', scrollTop);
+        console.log('scrollInfos : ', scrollInfos);
+        //현재위치와 복구위치가 같다면
+        if (scrollTop.toString() === scrollInfos) {
+          scrollRemove();
+        }
+      }, 0);
+    }
+  }, [scrollInfos, scrollRemove]);
 
   useEffect(() => {
     // fetchPopular();
@@ -44,6 +69,10 @@ const Home: NextPage = () => {
       console.log('###########');
       setPopular(res.data.results);
       setFiltered(res.data.results);
+
+      // setTimeout(() => {
+      //   window.scrollTo(0, 400);
+      // }, 0);
     });
 
     // panel TEST
