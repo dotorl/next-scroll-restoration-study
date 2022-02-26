@@ -2,6 +2,8 @@ import { useRouter } from 'next/router';
 import { useState, useEffect, useCallback } from 'react';
 // import { useHistory, useRouteMatch } from 'react-router';
 
+// ! 이건 작동안되는 코드임
+// TODO.  usePreserveScrolll 이슈있으면 기존에 이걸로 참고해서 소스변경해야함
 const useScrollMove = ({ page, path, dom }) => {
   // const history = useHistory();
   const router = useRouter();
