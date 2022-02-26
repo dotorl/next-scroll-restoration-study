@@ -19,7 +19,7 @@ const Home: NextPage = () => {
     'https://api.themoviedb.org/3/movie/popular?api_key=d1eb186c558e65b045af69086018917f&language=en-US&page=1';
   const default_API_URL2 = 'https://base.uplus.co.kr:9001/ubaseweb/mobile/homepanel?panelId=P2773';
 
-  const { scrollInfos, scrollRemove } = useScrollMove({
+  const { scrollInfos, scrollSave, scrollRemove } = useScrollMove({
     page: `home`,
     path: `/`,
     dom: '',
@@ -48,6 +48,12 @@ const Home: NextPage = () => {
     // fetchPopular();
     defaultAxios();
     // history.scrollRestoration = 'auto';
+
+    return () => {
+      // 페이지 나갈 때 스크롤 위치 기억하는걸로 해보기
+      console.log('unmount unmount unmount unmount');
+      scrollSave();
+    };
   }, []);
 
   // CASE1. 기본 Fetch 사용할 경우

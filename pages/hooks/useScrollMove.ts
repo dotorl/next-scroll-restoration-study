@@ -5,12 +5,14 @@ import { useState, useEffect, useCallback } from 'react';
 const useScrollMove = ({ page, path, dom }) => {
   // const history = useHistory();
   const router = useRouter();
+  // const { beforePopState } = useRouter();
   const [scrollInfos, setScrollInfos] = useState('0');
   // const match = useRouteMatch(path);
   const scrollSave = useCallback(() => {
     // const scrollPos = dom ? dom.scrollTop : window.scrollY;
 
     const scrollPos = window.scrollY + '';
+    // const scrollPos = Math.max(document.documentElement.scrollTop, document.body.scrollTop) + '';
     console.log('scrollPos', scrollPos);
     setScrollInfos(scrollPos);
     return localStorage.setItem(`${page}_scroll_pos`, scrollPos);
@@ -22,8 +24,23 @@ const useScrollMove = ({ page, path, dom }) => {
   }, []);
 
   useEffect(() => {
-    console.log(`baseballNews :: useEffect! `);
+    console.log(`useScrollMove :: useEffect! `);
     console.log('router : ', router);
+
+    // router.beforePopState(({ url, as, options }) => {
+    //   console.log('@@@@@@@@@@@@@  beforePopState');
+    //   console.log('url : ', url);
+    //   console.log('as : ', as);
+    //   console.log('options : ', options);
+    //   // I only want to allow these two routes!
+    //   if (as !== '/' && as !== '/other') {
+    //     // Have SSR render bad routes as a 404.
+    //     window.location.href = as;
+    //     return false;
+    //   }
+
+    //   return true;
+    // });
 
     // init
     setScrollInfos(() => localStorage.getItem(`${page}_scroll_pos`));
@@ -34,13 +51,26 @@ const useScrollMove = ({ page, path, dom }) => {
 
     return () => {
       console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ :: useEffect remove!');
-      console.log(window.scrollY);
-      console.log('router.asPath : ', router.asPath);
-      console.log(router);
-      console.log('path', path);
+      console.log('window.scrollY : ', window.scrollY);
+
+      // POP되기전에인데..
+      router.beforePopState(({ url, as, options }) => {
+        console.log('@@@@@@@@@@@@@  beforePopState');
+        console.log('url : ', url);
+        console.log('as : ', as);
+        console.log('options : ', options);
+        console.log(window.scrollY);
+
+        return true;
+      });
+
+      // console.log(window.scrollY);
+      // console.log('router.asPath : ', router.asPath);
+      // console.log(router);
+      // console.log('path', path);
       // if (router.asPath !== path) {
       //   console.log('################ SAVE ##############');
-      scrollSave();
+      // scrollSave();
       // }
     };
 
@@ -54,7 +84,7 @@ const useScrollMove = ({ page, path, dom }) => {
     // });
   }, [router, scrollSave]);
 
-  return { scrollInfos, scrollRemove };
+  return { scrollInfos, scrollSave, scrollRemove };
 };
 
 export default useScrollMove;
