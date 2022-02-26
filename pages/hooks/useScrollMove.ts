@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback } from 'react';
 const useScrollMove = ({ page, path, dom }) => {
   // const history = useHistory();
   const router = useRouter();
-  // const { beforePopState } = useRouter();
+
   const [scrollInfos, setScrollInfos] = useState('0');
   // const match = useRouteMatch(path);
   const scrollSave = useCallback(() => {
@@ -27,26 +27,16 @@ const useScrollMove = ({ page, path, dom }) => {
     console.log(`useScrollMove :: useEffect! `);
     console.log('router : ', router);
 
-    // router.beforePopState(({ url, as, options }) => {
-    //   console.log('@@@@@@@@@@@@@  beforePopState');
-    //   console.log('url : ', url);
-    //   console.log('as : ', as);
-    //   console.log('options : ', options);
-    //   // I only want to allow these two routes!
-    //   if (as !== '/' && as !== '/other') {
-    //     // Have SSR render bad routes as a 404.
-    //     window.location.href = as;
-    //     return false;
-    //   }
-
-    //   return true;
-    // });
-
     // init
     setScrollInfos(() => localStorage.getItem(`${page}_scroll_pos`));
 
+    // Router 이동 전에 스크롤 위치 저장
+    router.events.on('routeChangeStart', (url) => {
+      scrollSave();
+    });
+
     // TODO. 1. 바뀐 path 알아내기
-    // TODO. 2. path 바뀌기전에 ScrollY값 가져오기.씨발 Next 왜안되냐아아....
+    // TODO. 2. path 바뀌기전에 ScrollY값 가져오기. Next 왜안되냐아아....
     // TODO. 3. LocalStorage 말고 Session Storage를 쓰는게 맞지 않을까?
 
     return () => {

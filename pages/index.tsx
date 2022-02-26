@@ -19,41 +19,42 @@ const Home: NextPage = () => {
     'https://api.themoviedb.org/3/movie/popular?api_key=d1eb186c558e65b045af69086018917f&language=en-US&page=1';
   const default_API_URL2 = 'https://base.uplus.co.kr:9001/ubaseweb/mobile/homepanel?panelId=P2773';
 
-  const { scrollInfos, scrollSave, scrollRemove } = useScrollMove({
-    page: `home`,
-    path: `/`,
-    dom: '',
-  });
+  // 새로운 scroll 만들어 보기.
+  // const { scrollInfos, scrollSave, scrollRemove } = useScrollMove({
+  //   page: `home`,
+  //   path: `/`,
+  //   dom: '',
+  // });
 
-  useEffect(() => {
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@ HERE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-    // console.log(scrollInfos);
-    if (scrollInfos) {
-      console.log('scrollInfos : ', scrollInfos);
-      setTimeout(() => {
-        const transScrollInfos = Number(scrollInfos);
-        window.scrollTo(0, transScrollInfos);
-        const scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop);
-        console.log('scrollTop : ', scrollTop);
-        console.log('scrollInfos : ', scrollInfos);
-        //현재위치와 복구위치가 같다면
-        if (scrollTop.toString() === scrollInfos) {
-          scrollRemove();
-        }
-      }, 0);
-    }
-  }, [scrollInfos, scrollRemove]);
+  // useEffect(() => {
+  //   console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@ HERE @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
+  //   // console.log(scrollInfos);
+  //   if (scrollInfos) {
+  //     console.log('scrollInfos : ', scrollInfos);
+  //     setTimeout(() => {
+  //       const transScrollInfos = Number(scrollInfos);
+  //       window.scrollTo(0, transScrollInfos);
+  //       const scrollTop = Math.max(document.documentElement.scrollTop, document.body.scrollTop);
+  //       console.log('scrollTop : ', scrollTop);
+  //       console.log('scrollInfos : ', scrollInfos);
+  //       //현재위치와 복구위치가 같다면
+  //       if (scrollTop.toString() === scrollInfos) {
+  //         scrollRemove();
+  //       }
+  //     }, 0);
+  //   }
+  // }, [scrollInfos, scrollRemove]);
 
   useEffect(() => {
     // fetchPopular();
     defaultAxios();
     // history.scrollRestoration = 'auto';
 
-    return () => {
-      // 페이지 나갈 때 스크롤 위치 기억하는걸로 해보기
-      console.log('unmount unmount unmount unmount');
-      scrollSave();
-    };
+    // return () => {
+    //   // 페이지 나갈 때 스크롤 위치 기억하는걸로 해보기
+    //   console.log('unmount unmount unmount unmount');
+    //   scrollSave();
+    // };
   }, []);
 
   // CASE1. 기본 Fetch 사용할 경우
